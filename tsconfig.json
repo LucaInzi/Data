@@ -1,5 +1,4 @@
 {
-  "extends": "@finsweet/tsconfig",
   "compilerOptions": {
     "rootDir": ".",
     "baseUrl": "./",
