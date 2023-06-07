@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: data.map((row) => row.count),
           },
         ],
-      },
+      },©
     });
   });
 });
