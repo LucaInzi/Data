@@ -1,27 +1,20 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import pandas as pd
-from google.cloud import bigquery
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/data', methods=['GET'])
 def get_data():
-    # Créer un client BigQuery
-    client = bigquery.Client()
+    data = pd.read_csv('marchestp.csv')
 
-    # Définir une requête
-    query = """
-    SELECT Agence_Gerante, Materiel, Date_Mise_en_Service, Statut, Libelle_Statut_Materiel, CA, Nb_Jours_Fac, Valeur_nette_comptable, Prix_Reference_Monnaie_locale
-    FROM `b2u-wsf-data-project.loxam.détails_matériel`
-    LIMIT 1000
-    """
+    data['Annee_RefT'] = data['Annee_RefT'].astype(int)
+    data['CA'] = data['CA'].round().astype(int)
+    filtered_data = data.query('Annee_RefT in [2018, 2019, 2020, 2021, 2022]')
 
-
-    # Exécuter la requête et charger les résultats dans un DataFrame
-    df = client.query(query).to_dataframe()
-
-    # Convertir le DataFrame en un dictionnaire et le renvoyer comme une réponse JSON
-    return jsonify(df.to_dict())
+    result = filtered_data.to_dict(orient='records')
+    return jsonify(result)
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(debug=True)
